@@ -13,6 +13,30 @@ project_private:
     tags:
         - "fdedi"
 
+clear_cache_test:
+    stage: test
+    script:
+        - rm -rf ./build/*
+    cache:
+        key: "$CI_JOB_STAGE-$CI_COMMIT_REF_NAME"
+        paths:
+            - build/
+        policy: pull-push
+   # when: manual
+    allow_failure: true
+
+clear_cache_benchmark:
+    stage: benchmark
+    script:
+        - rm -rf ./build/*
+    cache:
+        key: "$CI_JOB_STAGE-$CI_COMMIT_REF_NAME"
+        paths:
+            - build/
+        policy: pull-push
+    #when: manual
+    allow_failure: true
+
 test:
     stage: test
     script: 
@@ -44,27 +68,3 @@ benchmark:
         policy: pull-push
     tags:
         - "fdedi"
-
-clear_cache_test:
-    stage: test
-    script:
-        - rm -rf ./build/*
-    cache:
-        key: "$CI_JOB_STAGE-$CI_COMMIT_REF_NAME"
-        paths:
-            - build/
-        policy: pull-push
-    when: manual
-    allow_failure: true
-
-clear_cache_benchmark:
-    stage: benchmark
-    script:
-        - rm -rf ./build/*
-    cache:
-        key: "$CI_JOB_STAGE-$CI_COMMIT_REF_NAME"
-        paths:
-            - build/
-        policy: pull-push
-    when: manual
-    allow_failure: true
