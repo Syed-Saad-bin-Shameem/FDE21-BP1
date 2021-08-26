@@ -1,5 +1,6 @@
 stages:
     - project_private
+    - clear_caches
     - test
     - benchmark
 
@@ -14,7 +15,7 @@ project_private:
         - "fdedi"
 
 clear_cache_test:
-    stage: test
+    stage: clear_caches
     script:
         - rm -rf ./build/*
     cache:
@@ -26,7 +27,7 @@ clear_cache_test:
     allow_failure: true
 
 clear_cache_benchmark:
-    stage: benchmark
+    stage: clear_caches
     script:
         - rm -rf ./build/*
     cache:
