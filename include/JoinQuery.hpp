@@ -1,4 +1,5 @@
 #include <string>
+#include <vector>
 
 //---------------------------------------------------------------------------
 class JoinQuery
@@ -43,5 +44,8 @@ class JoinQuery
    size_t avg(std::string segmentParam);
    /// Returns line count of given file
    size_t lineCount(std::string rel);
+   template <typename Out>
+   void split(const std::string& s, char delim, Out result);
+   std::vector<std::string> split(const std::string& s, char delim);
 };
 //---------------------------------------------------------------------------
