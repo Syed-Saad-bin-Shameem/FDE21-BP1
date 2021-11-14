@@ -51,12 +51,12 @@ JoinQuery::JoinQuery(std::string lineitem, std::string order,
    //t1.join();
    //t2.join();
    //t3.join();
-   std::async(&JoinQuery::processCustomerData, this);
-   std::async(&JoinQuery::processOrderData, this);
-   std::async(&JoinQuery::processLineItemData, this);
-   //processCustomerData();
-   //processOrderData();
-   //processLineItemData();
+   //std::async(&JoinQuery::processCustomerData, this);
+   //std::async(&JoinQuery::processOrderData, this);
+   //std::async(&JoinQuery::processLineItemData, this);
+   processCustomerData();
+   processOrderData();
+   processLineItemData();
    /*while(std::getline(c, str)){
       x = split(str, '|');
       custMap_V[x[6].c_str()].push_back(x[0].c_str());
