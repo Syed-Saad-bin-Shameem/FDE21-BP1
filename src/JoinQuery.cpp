@@ -5,6 +5,7 @@
 #include <thread>
 #include <unordered_map>
 #include <unordered_set>
+#include <cstdlib>
 #include <vector>
 #include <numeric>
 //---------------------------------------------------------------------------
@@ -25,7 +26,26 @@ JoinQuery::JoinQuery(std::string lineitem, std::string order,
    li.open(lineitem);
    o.open(order);
    c.open(customer);
-   while(std::getline(c, str)){
+   //std::vector<std::thread> threads;
+   /*std::thread t1([this]() {
+      processCustomerData();
+   });
+   std::thread t2([this]() {
+      processOrderData();
+   });
+   std::thread t3([this]() {
+      processLineItemData();
+   });*/
+   //std::thread t1 (&JoinQuery::processCustomerData, this);
+   //std::thread t2 (&JoinQuery::processOrderData, this);
+   //std::thread t3 (&JoinQuery::processLineItemData, this);
+   //t1.join();
+   //t2.join();
+   //t3.join();
+   processCustomerData();
+   processOrderData();
+   processLineItemData();
+   /*while(std::getline(c, str)){
       x = split(str, '|');
       custMap_V[x[6].c_str()].push_back(x[0].c_str());
    }
@@ -33,6 +53,24 @@ JoinQuery::JoinQuery(std::string lineitem, std::string order,
       x = split(str, '|');
       orderMap_V[x[1].c_str()].push_back(x[0].c_str());
    }
+   while(std::getline(li, str)){
+      x = split(str, '|');
+      lineitemMap_V[x[0].c_str()].push_back(std::stoi(x[4].c_str()));
+   }*/
+}
+void JoinQuery::processCustomerData(){
+   while(std::getline(c, str)){
+      x = split(str, '|');
+      custMap_V[x[6].c_str()].push_back(x[0].c_str());
+   }
+}
+void JoinQuery::processOrderData(){
+   while(std::getline(o, str)){
+      x = split(str, '|');
+      orderMap_V[x[1].c_str()].push_back(x[0].c_str());
+   }
+}
+void JoinQuery::processLineItemData(){
    while(std::getline(li, str)){
       x = split(str, '|');
       lineitemMap_V[x[0].c_str()].push_back(std::stoi(x[4].c_str()));
@@ -61,7 +99,6 @@ size_t JoinQuery::avg(std::string segmentParam)
    std::vector<std::string> orderKeys;
    for(auto it = std::begin(custKeys); it != std::end(custKeys); ++it) {
       orderKeys.insert(std::end(orderKeys), std::begin(orderMap_V[*it]), std::end(orderMap_V[*it]));
-      //std::copy (*it->begin(), *it->end(), std::back_inserter(orderKeys));
    }
    for(auto it = std::begin(orderKeys); it != std::end(orderKeys); ++it){
       sum += std::accumulate(lineitemMap_V[*it].begin(), lineitemMap_V[*it].end(), 0);
