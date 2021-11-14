@@ -8,6 +8,8 @@
 #include <cstdlib>
 #include <vector>
 #include <numeric>
+#include <omp.h>
+#include <future>
 //---------------------------------------------------------------------------
 std::ifstream li;
 std::ifstream o;
@@ -20,10 +22,10 @@ std::vector<std::string> x;
 uint64_t sum = 0.00;
 uint64_t no_of_items = 0.00;
 
-std::vector<std::string> split(const std::string &s, char delim);
-void processCustomerData();
-void processOrderData();
-void processLineItemData();
+//std::vector<std::string> split(const std::string &s, char delim);
+//void processCustomerData();
+//void processOrderData();
+//void processLineItemData();
 JoinQuery::JoinQuery(std::string lineitem, std::string order,
                      std::string customer)
 {
@@ -49,9 +51,12 @@ JoinQuery::JoinQuery(std::string lineitem, std::string order,
    //t1.join();
    //t2.join();
    //t3.join();
-   processCustomerData();
-   processOrderData();
-   processLineItemData();
+   std::async(&JoinQuery::processCustomerData, this);
+   std::async(&JoinQuery::processOrderData, this);
+   std::async(&JoinQuery::processLineItemData, this);
+   //processCustomerData();
+   //processOrderData();
+   //processLineItemData();
    /*while(std::getline(c, str)){
       x = split(str, '|');
       custMap_V[x[6].c_str()].push_back(x[0].c_str());
@@ -66,24 +71,27 @@ JoinQuery::JoinQuery(std::string lineitem, std::string order,
    }*/
 }
 void JoinQuery::processCustomerData(){
+   #pragma omp parallel
    while(std::getline(c, str)){
       x = split(str, '|');
       custMap_V[x[6].c_str()].push_back(x[0].c_str());
    }
 }
 void JoinQuery::processOrderData(){
+   #pragma omp parallel
    while(std::getline(o, str)){
       x = split(str, '|');
       orderMap_V[x[1].c_str()].push_back(x[0].c_str());
    }
 }
 void JoinQuery::processLineItemData(){
+   #pragma omp parallel
    while(std::getline(li, str)){
       x = split(str, '|');
       lineitemMap_V[x[0].c_str()].push_back(std::stoi(x[4].c_str()));
    }
 }
-void processCustomerData(){
+/*void processCustomerData(){
    while(std::getline(c, str)){
       x = split(str, '|');
       custMap_V[x[6].c_str()].push_back(x[0].c_str());
@@ -100,7 +108,7 @@ void processLineItemData(){
       x = split(str, '|');
       lineitemMap_V[x[0].c_str()].push_back(std::stoi(x[4].c_str()));
    }
-}
+}*/
 // Below functions taken from here: https://stackoverflow.com/questions/236129/how-do-i-iterate-over-the-words-of-a-string/236803#236803
 template <typename Out>
 void JoinQuery::split(const std::string &s, char delim, Out result) {
@@ -115,7 +123,7 @@ std::vector<std::string> JoinQuery::split(const std::string &s, char delim) {
    split(s, delim, std::back_inserter(elems));
    return elems;
 }
-template <typename Out>
+/*template <typename Out>
 void split(const std::string &s, char delim, Out result) {
    std::istringstream iss(s);
    std::string item;
@@ -127,7 +135,7 @@ std::vector<std::string> split(const std::string &s, char delim) {
    std::vector<std::string> elems;
    split(s, delim, std::back_inserter(elems));
    return elems;
-}
+}*/
 //---------------------------------------------------------------------------
 size_t JoinQuery::avg(std::string segmentParam)
 {
