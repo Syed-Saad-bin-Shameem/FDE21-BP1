@@ -19,7 +19,7 @@ class JoinQuery
     *     orders: path to a orders.tbl
     *     customer: path to a customer.tbl
     ************************************************************************/
-   JoinQuery(std::string lineitem, std::string orders, std::string customer);
+   JoinQuery(const std::string& lineitem, const std::string& orders, const std::string& customer);
 
    /**************************************************************************
     *  Computes avg(l_quantity)*100 for the following query.
@@ -42,16 +42,16 @@ class JoinQuery
     *     Therefore you should return avg(l_quantity) * 100
     *     as integer (more specific C++ type: size_t) as well.
     ************************************************************************/
-   size_t avg(std::string segmentParam);
+   static size_t avg(const std::string& segmentParam);
    /// Returns line count of given file
-   size_t lineCount(std::string rel);
+   static size_t lineCount(const std::string& rel);
    template <typename Out>
    void split(const std::string& s, char delim, Out result);
    std::vector<std::string> split(const std::string& s, char delim);
-   void processCustomerData();
-   void processOrderData();
-   void processLineItemData();
-   std::vector<std::string> split2(std::string str,
-                                   std::string delimeters);
+   static void processCustomerData();
+   static void processOrderData();
+   static void processLineItemData();
+   static std::vector<std::string> split2(const std::string& basicString,
+                                   const std::string& delimeters);
 };
 //---------------------------------------------------------------------------

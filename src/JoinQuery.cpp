@@ -1,10 +1,10 @@
 #include "JoinQuery.hpp"
 #include <assert.h>
-#include <fcntl.h>
-#include <omp.h>
+//#include <fcntl.h>
+//#include <omp.h>
 #include <sys/mman.h>
-#include <unistd.h>
-#include <cstdlib>
+//#include <unistd.h>
+//#include <cstdlib>
 #include <fstream>
 #include <future>
 #include <iostream>
@@ -12,11 +12,11 @@
 #include <sstream>
 #include <thread>
 #include <unordered_map>
-#include <unordered_set>
+//#include <unordered_set>
 #include <vector>
-#include <iterator>
+//#include <iterator>
 #include <string>
-#include <string_view>
+//#include <string_view>
 
 //---------------------------------------------------------------------------
 std::ifstream li;
@@ -35,8 +35,8 @@ uint64_t no_of_items = 0.00;
 //void processCustomerData();
 //void processOrderData();
 //void processLineItemData();
-JoinQuery::JoinQuery(std::string lineitem, std::string order,
-                     std::string customer)
+JoinQuery::JoinQuery(const std::string& lineitem, const std::string& order,
+                     const std::string& customer)
 {
    li.open(lineitem);
    o.open(order);
@@ -112,20 +112,20 @@ void JoinQuery::processLineItemData(){
    }
 }
 /*void processCustomerData(){
-   while(std::getline(c, str)){
-      x = split(str, '|');
+   while(std::getline(c, basicString)){
+      x = split(basicString, '|');
       custMap_V[x[6].c_str()].push_back(x[0].c_str());
    }
 }
 void processOrderData(){
-   while(std::getline(o, str)){
-      x = split(str, '|');
+   while(std::getline(o, basicString)){
+      x = split(basicString, '|');
       orderMap_V[x[1].c_str()].push_back(x[0].c_str());
    }
 }
 void processLineItemData(){
-   while(std::getline(li, str)){
-      x = split(str, '|');
+   while(std::getline(li, basicString)){
+      x = split(basicString, '|');
       lineitemMap_V[x[0].c_str()].push_back(std::stoi(x[4].c_str()));
    }
 }*/
@@ -144,20 +144,20 @@ std::vector<std::string> JoinQuery::split(const std::string &s, char delim) {
    return elems;
 }*/
 // Below function taken from here: https://www.reddit.com/r/Cplusplus/comments/gnc9rz/fast_string_split/
-std::vector<std::string> JoinQuery::split2(std::string str, std::string delimeters)
+std::vector<std::string> JoinQuery::split2(const std::string& basicString, const std::string& delimeters)
 {
    std::vector<std::string> res;
-   res.reserve(str.length() / 2);
+   res.reserve(basicString.length() / 2);
 
-   const char* ptr = str.data();
+   const char* ptr = basicString.data();
    size_t size = 0;
    #pragma omp for
-   for(const char c : str)
+   for(const char i : basicString)
    {
       #pragma omp for
       for(const char d : delimeters)
       {
-         if(c == d)
+         if(i == d)
          {
             res.emplace_back(ptr, size);
             ptr += size + 1;
@@ -174,7 +174,7 @@ std::vector<std::string> JoinQuery::split2(std::string str, std::string delimete
    return res;
 }
 //---------------------------------------------------------------------------
-size_t JoinQuery::avg(std::string segmentParam)
+size_t JoinQuery::avg(const std::string& segmentParam)
 {
    sum = 0.0;
    no_of_items = 0.00;
@@ -192,7 +192,7 @@ size_t JoinQuery::avg(std::string segmentParam)
    return sum*100/no_of_items;
 }
 //---------------------------------------------------------------------------
-size_t JoinQuery::lineCount(std::string rel)
+size_t JoinQuery::lineCount(const std::string& rel)
 {
    std::ifstream relation(rel);
    assert(relation);  // make sure the provided string references a file
