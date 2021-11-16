@@ -1,10 +1,6 @@
 #include "JoinQuery.hpp"
 #include <assert.h>
-//#include <fcntl.h>
-//#include <omp.h>
 #include <sys/mman.h>
-//#include <unistd.h>
-//#include <cstdlib>
 #include <fstream>
 #include <future>
 #include <iostream>
@@ -12,11 +8,8 @@
 #include <sstream>
 #include <thread>
 #include <unordered_map>
-//#include <unordered_set>
 #include <vector>
-//#include <iterator>
 #include <string>
-//#include <string_view>
 
 //---------------------------------------------------------------------------
 std::ifstream li;
@@ -35,18 +28,6 @@ JoinQuery::JoinQuery(const std::string& lineitem, const std::string& order,
    li.open(lineitem);
    o.open(order);
    c.open(customer);
-   //std::thread t1 (::processCustomerData);
-   //std::thread t2 (::processOrderData);
-   //std::thread t3 (::processLineItemData);
-   //std::thread t1 (&JoinQuery::processCustomerData, this);
-   //std::thread t2 (&JoinQuery::processOrderData, this);
-   //std::thread t3 (&JoinQuery::processLineItemData, this);
-   //t1.join();
-   //t2.join();
-   //t3.join();
-   //std::async(&JoinQuery::processCustomerData, this);
-   //std::async(&JoinQuery::processOrderData, this);
-   //std::async(&JoinQuery::processLineItemData, this);
    processCustomerData();
    processOrderData();
    processLineItemData();
@@ -54,7 +35,6 @@ JoinQuery::JoinQuery(const std::string& lineitem, const std::string& order,
 void JoinQuery::processCustomerData(){
    #pragma omp parallel
    while(std::getline(c, str)){
-      //x = split(str, '|');
       x = split2(str, '|');
       custMap_V[x[6].c_str()].push_back(x[0].c_str());
    }
@@ -62,7 +42,6 @@ void JoinQuery::processCustomerData(){
 void JoinQuery::processOrderData(){
    #pragma omp parallel
    while(std::getline(o, str)){
-      //x = split(str, '|');
       x = split2(str, '|');
       orderMap_V[x[1].c_str()].push_back(x[0].c_str());
    }
@@ -70,7 +49,6 @@ void JoinQuery::processOrderData(){
 void JoinQuery::processLineItemData(){
    #pragma omp parallel
    while(std::getline(li, str)){
-      //x = split(str, '|');
       x = split2(str, '|');
       lineitemMap_V[x[0].c_str()].push_back(std::stoi(x[4]));
    }

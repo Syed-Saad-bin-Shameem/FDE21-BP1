@@ -45,13 +45,10 @@ class JoinQuery
    static size_t avg(const std::string& segmentParam);
    /// Returns line count of given file
    static size_t lineCount(const std::string& rel);
-   template <typename Out>
-   void split(const std::string& s, char delim, Out result);
-   std::vector<std::string> split(const std::string& s, char delim);
    static void processCustomerData();
    static void processOrderData();
    static void processLineItemData();
    static std::vector<std::string> split2(const std::string& basicString,
-                                   const char delimeters);
+                                   char delimeters);
 };
 //---------------------------------------------------------------------------
