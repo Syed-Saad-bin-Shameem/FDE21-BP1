@@ -14,6 +14,9 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
+#include <iterator>
+#include <string>
+#include <string_view>
 
 //---------------------------------------------------------------------------
 std::ifstream li;
@@ -87,21 +90,24 @@ JoinQuery::JoinQuery(std::string lineitem, std::string order,
 void JoinQuery::processCustomerData(){
    #pragma omp parallel
    while(std::getline(c, str)){
-      x = split(str, '|');
+      //x = split(str, '|');
+      x = split2(str, "|");
       custMap_V[x[6].c_str()].push_back(x[0].c_str());
    }
 }
 void JoinQuery::processOrderData(){
    #pragma omp parallel
    while(std::getline(o, str)){
-      x = split(str, '|');
+      //x = split(str, '|');
+      x = split2(str, "|");
       orderMap_V[x[1].c_str()].push_back(x[0].c_str());
    }
 }
 void JoinQuery::processLineItemData(){
    #pragma omp parallel
    while(std::getline(li, str)){
-      x = split(str, '|');
+      //x = split(str, '|');
+      x = split2(str, "|");
       lineitemMap_V[x[0].c_str()].push_back(std::stoi(x[4].c_str()));
    }
 }
@@ -150,6 +156,35 @@ std::vector<std::string> split(const std::string &s, char delim) {
    split(s, delim, std::back_inserter(elems));
    return elems;
 }*/
+// Below function taken from here: https://www.reddit.com/r/Cplusplus/comments/gnc9rz/fast_string_split/
+std::vector<std::string> JoinQuery::split2(std::string str, std::string delimeters)
+{
+   std::vector<std::string> res;
+   res.reserve(str.length() / 2);
+
+   const char* ptr = str.data();
+   size_t size = 0;
+
+   for(const char c : str)
+   {
+      for(const char d : delimeters)
+      {
+         if(c == d)
+         {
+            res.emplace_back(ptr, size);
+            ptr += size + 1;
+            size = 0;
+            goto next;
+         }
+      }
+      ++size;
+   next: continue;
+   }
+
+   if(size)
+      res.emplace_back(ptr, size);
+   return res;
+}
 //---------------------------------------------------------------------------
 size_t JoinQuery::avg(std::string segmentParam)
 {

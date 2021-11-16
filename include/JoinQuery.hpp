@@ -1,5 +1,6 @@
 #include <string>
 #include <vector>
+#include <string_view>
 
 //---------------------------------------------------------------------------
 class JoinQuery
@@ -50,5 +51,7 @@ class JoinQuery
    void processCustomerData();
    void processOrderData();
    void processLineItemData();
+   std::vector<std::string> split2(std::string str,
+                                   std::string delimeters);
 };
 //---------------------------------------------------------------------------
