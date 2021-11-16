@@ -1,15 +1,20 @@
 #include "JoinQuery.hpp"
 #include <assert.h>
+#include <fcntl.h>
+#include <omp.h>
+#include <sys/mman.h>
+#include <unistd.h>
+#include <cstdlib>
 #include <fstream>
+#include <future>
+#include <iostream>
+#include <numeric>
 #include <sstream>
 #include <thread>
 #include <unordered_map>
 #include <unordered_set>
-#include <cstdlib>
 #include <vector>
-#include <numeric>
-#include <omp.h>
-#include <future>
+
 //---------------------------------------------------------------------------
 std::ifstream li;
 std::ifstream o;
@@ -21,6 +26,7 @@ std::unordered_map<std::string, std::vector<std::size_t>> lineitemMap_V;
 std::vector<std::string> x;
 uint64_t sum = 0.00;
 uint64_t no_of_items = 0.00;
+//int handleL, handleC, handleO;
 
 //std::vector<std::string> split(const std::string &s, char delim);
 //void processCustomerData();
@@ -32,6 +38,14 @@ JoinQuery::JoinQuery(std::string lineitem, std::string order,
    li.open(lineitem);
    o.open(order);
    c.open(customer);
+
+   /*handleL = ::open(lineitem.c_str(), O_RDONLY);
+   handleC = ::open(customer.c_str(), O_RDONLY);
+   handleO = ::open(order.c_str(), O_RDONLY);
+   lseek(handleL, 0, SEEK_END);
+   auto size=lseek(handleL,0,SEEK_CUR);
+   auto data = mmap(nullptr,size,PROT_READ,MAP_SHARED,handleL,0);*/
+
    //std::vector<std::thread> threads;
    /*std::thread t1([this]() {
       processCustomerData();
@@ -45,18 +59,18 @@ JoinQuery::JoinQuery(std::string lineitem, std::string order,
    //std::thread t1 (::processCustomerData);
    //std::thread t2 (::processOrderData);
    //std::thread t3 (::processLineItemData);
-   //std::thread t1 (&JoinQuery::processCustomerData, this);
-   //std::thread t2 (&JoinQuery::processOrderData, this);
-   //std::thread t3 (&JoinQuery::processLineItemData, this);
-   //t1.join();
-   //t2.join();
-   //t3.join();
+   std::thread t1 (&JoinQuery::processCustomerData, this);
+   std::thread t2 (&JoinQuery::processOrderData, this);
+   std::thread t3 (&JoinQuery::processLineItemData, this);
+   t1.join();
+   t2.join();
+   t3.join();
    //std::async(&JoinQuery::processCustomerData, this);
    //std::async(&JoinQuery::processOrderData, this);
    //std::async(&JoinQuery::processLineItemData, this);
-   processCustomerData();
-   processOrderData();
-   processLineItemData();
+   //processCustomerData();
+   //processOrderData();
+   //processLineItemData();
    /*while(std::getline(c, str)){
       x = split(str, '|');
       custMap_V[x[6].c_str()].push_back(x[0].c_str());
