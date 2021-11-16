@@ -108,7 +108,7 @@ void JoinQuery::processLineItemData(){
    while(std::getline(li, str)){
       //x = split(str, '|');
       x = split2(str, "|");
-      lineitemMap_V[x[0].c_str()].push_back(std::stoi(x[4].c_str()));
+      lineitemMap_V[x[0].c_str()].push_back(std::stoi(x[4]));
    }
 }
 /*void processCustomerData(){
@@ -130,7 +130,7 @@ void processLineItemData(){
    }
 }*/
 // Below functions taken from here: https://stackoverflow.com/questions/236129/how-do-i-iterate-over-the-words-of-a-string/236803#236803
-template <typename Out>
+/*template <typename Out>
 void JoinQuery::split(const std::string &s, char delim, Out result) {
    std::istringstream iss(s);
    std::string item;
@@ -139,19 +139,6 @@ void JoinQuery::split(const std::string &s, char delim, Out result) {
    }
 }
 std::vector<std::string> JoinQuery::split(const std::string &s, char delim) {
-   std::vector<std::string> elems;
-   split(s, delim, std::back_inserter(elems));
-   return elems;
-}
-/*template <typename Out>
-void split(const std::string &s, char delim, Out result) {
-   std::istringstream iss(s);
-   std::string item;
-   while (std::getline(iss, item, delim)) {
-      *result++ = item;
-   }
-}
-std::vector<std::string> split(const std::string &s, char delim) {
    std::vector<std::string> elems;
    split(s, delim, std::back_inserter(elems));
    return elems;
@@ -164,9 +151,10 @@ std::vector<std::string> JoinQuery::split2(std::string str, std::string delimete
 
    const char* ptr = str.data();
    size_t size = 0;
-
+   #pragma omp for
    for(const char c : str)
    {
+      #pragma omp for
       for(const char d : delimeters)
       {
          if(c == d)
