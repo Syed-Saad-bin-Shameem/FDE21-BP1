@@ -52,6 +52,6 @@ class JoinQuery
    static void processOrderData();
    static void processLineItemData();
    static std::vector<std::string> split2(const std::string& basicString,
-                                   const std::string& delimeters);
+                                   const char delimeters);
 };
 //---------------------------------------------------------------------------
